@@ -37,12 +37,12 @@ def compute_chunked_hashes(
     init_hash: str = ""
 ) -> List[str]:
     """
-    计算令牌序列的分块哈希链
+    Compute chunked hash chain for a sequence of tokens
     
-    :param tokens: 输入令牌序列 (PyTorch Tensor 或 List[int])
-    :param chunk_size: 每个块的大小
-    :param init_hash: 初始哈希值 (默认为空字符串)
-    :return: 所有块的哈希值列表，按顺序排列
+    :param tokens: Input token sequence (PyTorch Tensor or List[int])
+    :param chunk_size: Size of each chunk
+    :param init_hash: Initial hash value (empty string by default)
+    :return: List of hash values for all chunks, in order
     """
     def hash_chunk(chunk, prefix):
         if isinstance(chunk, torch.Tensor):
@@ -51,20 +51,20 @@ def compute_chunked_hashes(
             chunk_bytes = array.array("I", chunk).tobytes()
         return hashlib.sha256(prefix.encode("ascii") + chunk_bytes).hexdigest()
 
-    # 分块处理
+    # Process in chunks
     chunks = [
         tokens[i:i + chunk_size] 
         for i in range(0, len(tokens), chunk_size)
     ]
     
-    # 计算哈希链
+    # Compute hash chain
     hash_chain = []
     current_hash = init_hash
     for chunk in chunks:
         current_hash = hash_chunk(chunk, current_hash)
         hash_chain.append(current_hash)
     
-    return hash_chain,解读代码
+    return hash_chain
 
 
 class OpenAIServingTokenization(OpenAIServing):
